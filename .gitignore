@@ -1,0 +1,7 @@
+my_novels/*
+memory/*
+.vscode
+novel_kb_index/*
+.env
+indexing_state.json
+novel/*

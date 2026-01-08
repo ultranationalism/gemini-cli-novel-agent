@@ -1,0 +1,1 @@
+GEMINI_SYSTEM_MD=writer_prompt.md gemini --yolo
