@@ -1,7 +1,9 @@
-my_novels/*
 memory/*
 .vscode
 novel_kb_index/*
 .env
 indexing_state.json
+volumes/*
+indexing_state_milvus_qwen.json
+ref_novels/*
 novel/*

@@ -10,18 +10,27 @@ tools = [
     # 1. sequential-thinking
     "sequential_thinking__sequentialthinking",
 
-    # 2. novel-RAG-reference
-    "novel_RAG_reference__add_documents",
-    "novel_RAG_reference__answer_question",
-    "novel_RAG_reference__list_documents",
-    "novel_RAG_reference__retrieve_context",
-    "novel_RAG_reference__semantic_search",
+    # 2. milvus
+    "milvus__create_collection",
+    "milvus__delete_entities",
+    "milvus__get_collection_info",
+    "milvus__hybrid_search",
+    "milvus__insert_data",
+    "milvus__list_collections",
+    "milvus__list_databases",
+    "milvus__load_collection",
+    "milvus__query",
+    "milvus__release_collection",
+    "milvus__text_search",
+    "milvus__text_similarity_search",
+    "milvus__use_database",
+    "milvus__vector_search",
 
     # 3. tavily
-    "tavily__tavily_crawl",
-    "tavily__tavily_extract",
-    "tavily__tavily_map",
-    "tavily__tavily_search",
+    "tavily__crawl",
+    "tavily__extract",
+    "tavily__map",
+    "tavily__search",
 
     # 4. memory
     "memory__add_observations",
@@ -33,13 +42,6 @@ tools = [
     "memory__open_nodes",
     "memory__read_graph",
     "memory__search_nodes",
-
-    # 5. novel-RAG-memory
-    "novel_RAG_memory__add_documents",
-    "novel_RAG_memory__answer_question",
-    "novel_RAG_memory__list_documents",
-    "novel_RAG_memory__retrieve_context",
-    "novel_RAG_memory__semantic_search",
 
     # 6. filesystem
     "filesystem__create_directory",
@@ -232,12 +234,9 @@ system_prompt = '''
     - **使用场景**: 用于构思复杂的大纲、设计剧情反转、进行逻辑自洽性检查或处理多线索交织的推演。在正式输出章节内容前，应优先使用此工具规划逻辑。
 
 ### 2. 知识检索与内容参考 (RAG)
-* **novel-RAG-reference**:
-    - **功能**: 静态检索。
-    - **使用场景**: 内含有丰富的语料库，可以查询语料库参考情景怎么写，当你不能确定的时候可以模糊语义检索参考其中的小说
-* **novel-RAG-memory**:
-    - **功能**: RAG记忆与以及检索
-    - **使用场景**: 可以进行模糊检索的向量数据库
+* **milvus**:
+    - **功能**: 向量数据库
+    - **使用场景**: 内含小说参考库novel_ref和记忆库memory,记忆库存储后可以用于模糊查询，长篇小说必备。
 
 ### 3. 多维记忆管理 (Advanced Memory)
 * **memory (Knowledge Graph)**:

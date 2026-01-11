@@ -7,18 +7,32 @@
         "@modelcontextprotocol/server-sequential-thinking"
       ]
     },
-    "novel-RAG-reference": {
-      "command": "${NOVEL_PYTHON_PATH}",
+    "milvus": {
+      "command": "uv",
       "args": [
-        "-m", "txtai_mcp_server",
-        "--embeddings", "${NOVEL_KB_PATH}"
-      ]
+        "run",
+        "--with",
+        "mcp-server-milvus",
+        "mcp-server-milvus",
+        "--milvus-uri",
+        "http://localhost:19530"
+      ],
+      "env": {
+        "MILVUS_URI": "http://localhost:19530",
+        "MILVUS_TOKEN": "",
+        "OPENAI_BASE_URL": "https://openrouter.ai/api/v1",
+        "OPENAI_API_KEY": "${OPENAI_API_KEY}",
+        "EMBEDDING_MODEL_ID": "qwen/qwen3-embedding-8b"
+      }
     },
     "tavily": {
       "command": "npx",
-      "args": ["-y", "tavily-mcp@latest"],
+      "args": [
+        "-y",
+        "tavily-mcp@latest"
+      ],
       "env": {
-        "TAVILY_API_KEY": "${TAVILY_API_KEY}" 
+        "TAVILY_API_KEY": "${TAVILY_API_KEY}"
       }
     },
     "memory": {
@@ -28,21 +42,20 @@
         "@modelcontextprotocol/server-memory"
       ]
     },
-    "novel-RAG-memory": {
-      "command": "${NOVEL_PYTHON_PATH}",
-      "args": [
-        "-m", "txtai_mcp_server",
-        "--embeddings", "${NOVEL_KB_PATH}"
-      ]
-    },
     "filesystem": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-filesystem", "$PWD"], 
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "$PWD"
+      ],
       "trust": true
     },
     "mem0": {
       "command": "${NOVEL_PYTHON_PATH}",
-      "args": ["/root/gemini-cli-novel/mcp-mem0/src/main.py"],
+      "args": [
+        "/root/gemini-cli-novel/mcp-mem0/src/main.py"
+      ],
       "env": {
         "TRANSPORT": "stdio",
         "LLM_PROVIDER": "openrouter",
@@ -56,6 +69,11 @@
   },
   "experimental": {
     "enableAgents": true
+  },
+  "context": {
+    "fileFiltering": {
+      "respectGitIgnore ": false,
+      "respectGitIgnore": false
+    }
   }
-  
 }
