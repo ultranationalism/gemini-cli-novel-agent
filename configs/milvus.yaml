@@ -1440,7 +1440,7 @@ function:
       openai:
         credential:  # The name in the crendential configuration item
         enable: true # Whether to enable openai model service
-        url: http://host.docker.internal:8888/v1 # Your openai embedding url, Default is the official embedding url
+        url: https://openrouter.ai/api/v1/embeddings # Your openai embedding url, Default is the official embedding url
       siliconflow:
         credential:  # The name in the crendential configuration item
         enable: true # Whether to enable siliconflow model service

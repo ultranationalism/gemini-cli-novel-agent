@@ -1,0 +1,122 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "agent": {
+    "writer": {
+      "model": "google/gemini-3-pro-preview", 
+      "prompt": "{file:./.opencode/gemini/gemini.txt}\n\n{file:./.opencode/workflows/writer_logic.md}",
+      "tools": {
+        "bash": true,
+        "write": true
+      },
+      "permission": {
+        "skill":{
+        "writter-logic":"allow"
+        }
+      },
+      "write": {
+          ".env": "deny",                // 禁止读写环境变量文件
+          "opencode.json": "deny"                     // 其他所有路径默认询问（或者设为 "deny"）
+        },
+      "bash": {
+          "git *": "allow",              // 允许执行 git 相关命令
+          "ls *": "allow",               // 允许列出文件
+          "rm -rf /": "deny",            // 严禁危险的根目录删除
+          "*": "ask"                     // 其他 shell 命令需手动确认
+        },
+      "external_directory": "deny"
+    }
+  },
+  "plugin": [
+    "opencode-gemini-auth"
+  ],
+  "mcp": {
+    "milvus": {
+      "type": "local",
+      "command": [
+        "uv",
+        "run",
+        "--with",
+        "mcp-server-milvus",
+        "mcp-server-milvus",
+        "--milvus-uri",
+        "http://localhost:19530"
+      ],
+      "environment": {
+      }
+    },
+    "openmemory": {
+      "type": "remote",
+      "url": "http://localhost:8765/mcp/cursor/sse/worker",
+      "enabled": true
+    },
+    "sequential-thinking": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "dotenv-cli",
+        "--",
+        "dotenv",
+        "-e",
+        ".env",
+        "--",
+        "npx",
+        "-y",
+        "@modelcontextprotocol/server-sequential-thinking"
+      ],
+      "environment": {}
+    },
+    "tavily": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "dotenv-cli",
+        "--",
+        "dotenv",
+        "-e",
+        ".env",
+        "--",
+        "npx",
+        "-y",
+        "tavily-mcp@latest"
+      ],
+      "environment": {}
+    },
+    "memory": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "dotenv-cli",
+        "--",
+        "dotenv",
+        "-e",
+        ".env",
+        "--",
+        "npx",
+        "-y",
+        "@modelcontextprotocol/server-memory"
+      ],
+      "environment": {}
+    },
+    "filesystem": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "dotenv-cli",
+        "--",
+        "dotenv",
+        "-e",
+        ".env",
+        "--",
+        "npx",
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "."
+      ],
+      "environment": {}
+    }
+  }
+}

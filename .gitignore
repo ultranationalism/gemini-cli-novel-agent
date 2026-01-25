@@ -7,3 +7,4 @@ volumes/*
 indexing_state_milvus_qwen.json
 ref_novels/*
 novel/*
+node_modules

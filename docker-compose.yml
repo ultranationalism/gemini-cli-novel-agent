@@ -70,23 +70,67 @@ services:
       MILVUS_URL: http://standalone:19530
     depends_on:
       - "standalone"
-
-  pgvector:
-    image: pgvector/pgvector:pg18 # 建议锁定一个大版本
-    container_name: pgvector-service
-    ports:
-      - "5432:5432"
+  openmemory-mcp:
+    build:
+      # 使用仓库根作为 build context，dockerfile 指向 repo 下的 docker/openmemory-mcp/Dockerfile（路径简单、直观）
+      context: .
+      dockerfile: docker/openmemory-mcp/Dockerfile
+      args:
+        - VECTOR_STORE=milvus
+        # 控制是否将本地修补文件复制进镜像（用于快速 hotfix / 回滚）
+        - APPLY_LOCAL_CATEGORIZATION_PATCH=true
+        - APPLY_LOCAL_MEMORY_PATCH=true
+    image: local/openmemory-mcp:latest
     environment:
-      POSTGRES_USER: myuser
-      POSTGRES_PASSWORD: mypassword
-      POSTGRES_DB: vectordb
-    volumes:
-      # 方案 A: 命名卷（推荐，由 Docker 管理路径）
-      - pg_vector_data:/var/lib/postgresql
+      # 1. 基础模型配置
+      - OPENAI_BASE_URL=https://openrouter.ai/api/v1
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - USER=worker
+
+      # 2. Milvus 配置 - 使用 Docker 服务名称
+      - VECTOR_STORE_PROVIDER=milvus
+      - MILVUS_HOST=standalone  # 使用 Milvus 容器的服务名
+      - MILVUS_PORT=19530
+      - MILVUS_DB_NAME=default
+      - MILVUS_COLLECTION_NAME=openmemory_mcp
+      - MILVUS_URL=http://standalone:19530  # 完整 Milvus 访问 URL
+
+    ports:
+      - "8765:8765"
+
+    # 3. 确保在 Milvus 启动后再启动
+    depends_on:
+      - "standalone"
+
+    # 4. 开启 Debug 模式
+    command: >
+      sh -c "uvicorn main:app --host 0.0.0.0 --port 8765 --log-level debug"
+  openmemory-ui:
+      image: mem0/openmemory-ui:latest
+      ports:
+        - "3001:3000"  # 改为 3001 避免与 attu 冲突
+      environment:
+        - NEXT_PUBLIC_API_URL=http://localhost:8765
+        - NEXT_PUBLIC_USER_ID=worker
+      depends_on:
+        - "openmemory-mcp"
+
+  # pgvector:
+  #   image: pgvector/pgvector:pg18 # 建议锁定一个大版本
+  #   container_name: pgvector-service
+  #   ports:
+  #     - "5432:5432"
+  #   environment:
+  #     POSTGRES_USER: myuser
+  #     POSTGRES_PASSWORD: mypassword
+  #     POSTGRES_DB: vectordb
+  #   volumes:
+  #     # 方案 A: 命名卷（推荐，由 Docker 管理路径）
+  #     - pg_vector_data:/var/lib/postgresql
       
-      # 自动初始化：放入此目录的 .sql 文件会在首次启动时运行
-      - ./init.sql:/docker-entrypoint-initdb.d
-    restart: always
+  #     # 自动初始化：放入此目录的 .sql 文件会在首次启动时运行
+  #     - ./init.sql:/docker-entrypoint-initdb.d
+  #   restart: always
 
 volumes:
   pg_vector_data:
